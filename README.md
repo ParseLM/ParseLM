@@ -4,6 +4,10 @@
 
 ParseLM is a lightweight TypeScript library designed to streamline interactions with Large Language Models (LLMs). It enables you to reliably extract structured data, perform classifications, and conditionally execute code based on text content, all in a type-safe manner using familiar schema definitions.
 
+## Motivation
+
+ParseLM was created to bridge the gap between unstructured LLM outputs and the structured data needed for application logic. Traditional LLM interactions often rely on prompt engineering and fragile parsing techniques, leading to brittle applications. ParseLM provides a more reliable way to extract and validate structured information from LLM responses, allowing developers to integrate AI capabilities into their applications with greater confidence and type safety.
+
 ## Features
 
 *   **Structured Data Extraction:** Define your desired data structure using schemas and let ParseLM handle the LLM interaction to extract matching, validated data.
@@ -256,3 +260,13 @@ These are shortcuts built on top of the core `context().schema()` flow.
     // Handling bug report: The login button isn't working on the staging server.
     // Switch result: { status: 'Bug Filed' }
     ```
+
+## FAQ
+
+### Why this over structured outputs from LLMs?
+
+By using a minimal schema and prompting, ParseLM can get structured outputs from models that don't support structured outputs.
+
+### Why this abstraction?
+
+ParseLM is opinionated that the chat abstraction (User / Assistant) is not necessarily a helpful abstraction while intermingling with control flow.
