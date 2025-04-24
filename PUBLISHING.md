@@ -35,6 +35,10 @@ This document outlines the steps taken to prepare the ParseLM package for npm pu
    - Verify required files exist
 3. Run `npm publish` to publish to npm registry
    - For beta releases use `npm publish --tag beta`
+4. Run `npm run test-published` to verify the published package works correctly
+   - This installs the package in a temporary directory
+   - Creates and runs a simple TypeScript test file
+   - Validates that the package can be imported and used as expected
 
 ## What's Included in the Package
 
@@ -59,4 +63,5 @@ These files are excluded through .npmignore:
 1. **Fix Tests**: Update the tests to work with the new module structure
 2. **Add CI/CD**: Set up GitHub Actions for automated testing and publishing
 3. **Add More Documentation**: Improve the README and add API documentation
-4. **Version Bump Strategy**: Implement semantic versioning automation 
+4. **Version Bump Strategy**: Implement semantic versioning automation
+5. **Automate Publish Testing**: Integrate the publish testing into the CI/CD pipeline 

@@ -58,6 +58,7 @@
     "format": "prettier --write \"**/*.{ts,js,json,md,html,css}\"",
     "prepublishOnly": "node scripts/prepare-publish.js",
     "prepare-publish": "node scripts/prepare-publish.js",
+    "test-published": "tsx scripts/publish.integration.test.ts",
     "lint": "prettier --check \"**/*.{ts,js,json,md,html,css}\""
   },
   "engines": {

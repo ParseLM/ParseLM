@@ -265,8 +265,8 @@ These are shortcuts built on top of the core `context().schema()` flow.
 
 ### Why this over structured outputs from LLMs?
 
-By using a minimal schema and prompting, ParseLM can get structured outputs from models that don't support structured outputs.
+By using a minimal schema and prompting, ParseLM can get structured outputs from models that don't support structured outputs. It also saves the amount of input tokens being carried over the wire.
 
 ### Why this abstraction?
 
-ParseLM is opinionated that the chat abstraction (User / Assistant) is not necessarily a helpful abstraction while intermingling with control flow.
+ParseLM is opinionated that the chat abstraction (User / Assistant) is not necessarily a helpful abstraction while intermingling with control flow. The "Prompt Engineering" bit on getting structured outputs to work can be abstracted away.
