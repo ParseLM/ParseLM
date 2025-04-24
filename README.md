@@ -189,77 +189,87 @@ Defines the Zod schema for the data to be extracted from the `context`. Returns 
 *   **`.safeValue(): Promise<{ success: true; value: T } | { success: false; error: string; value: null }>`**: Executes the LLM call and returns a result object indicating success or failure, avoiding thrown exceptions.
 *   **`.raw(): Promise<{ structured: T | null, raw: string, cost?: number | null }>`**: Executes the LLM call and returns an object containing the parsed data (or null on failure), the raw text response from the LLM, and potentially the cost estimation if provided by the model.
 
-### Utility Methods
+## Utility Methods
 
 These are shortcuts built on top of the core `context().schema()` flow.
 
-*   **`parselm.isTrue(context: string): Promise<boolean>`**: Determines if the `context` represents a logically true statement. Useful for simple yes/no checks.
-    ```typescript
-    const text = "The system status is green and operational.";
-    const isOperational = await parselm.isTrue(text);
-    console.log(`System operational: ${isOperational}`); // Likely true
-    ```
+### `parselm.isTrue(context: string): Promise<boolean>`
 
-*   **`parselm.oneOf(context: string, strings: string[]): Promise<string>`**: Classifies the `context` into exactly one of the provided `strings`. Throws an error if the LLM's classification doesn't match one of the options.
-    ```typescript
-    const inputText = "This feedback is highly positive and encouraging!";
-    const sentiment = await parselm.oneOf(inputText, ["positive", "negative", "neutral"]);
-    console.log(`Detected sentiment: ${sentiment}`); // Likely "positive"
-    ```
+Determines if the `context` represents a logically true statement. Useful for simple yes/no checks.
+```typescript
+const text = "The system status is green and operational.";
+const isOperational = await parselm.isTrue(text);
+console.log(`System operational: ${isOperational}`); // Likely true
+```
 
-*   **`parselm.toList(context: string): Promise<string[]>`**: Extracts a list of strings from the `context`.
-    ```typescript
-    const listText = "Items needed: apples, bananas, oranges.";
-    const items = await parselm.toList(listText);
-    console.log("Shopping list:", items); // Likely ["apples", "bananas", "oranges"]
-    ```
+### `parselm.oneOf(context: string, strings: string[]): Promise<string>`
 
-*   **`parselm.toListOf<T>(context: string, itemSchema: z.ZodSchema<T>): Promise<T[]>`**: Extracts a list where each item conforms to the provided Zod `itemSchema`.
-    ```typescript
-    const taskSchema = z.object({ description: z.string(), priority: z.number() });
-    const tasksText = "Task 1: Write report (Priority 1). Task 2: Schedule meeting (Priority 3).";
-    const tasks = await parselm.toListOf(tasksText, taskSchema);
-    console.log("Parsed tasks:", tasks);
-    // Likely:
-    // [
-    //   { description: 'Write report', priority: 1 },
-    //   { description: 'Schedule meeting', priority: 3 }
-    // ]
-    ```
+Classifies the `context` into exactly one of the provided `strings`. Throws an error if the LLM's classification doesn't match one of the options.
+```typescript
+const inputText = "This feedback is highly positive and encouraging!";
+const sentiment = await parselm.oneOf(inputText, ["positive", "negative", "neutral"]);
+console.log(`Detected sentiment: ${sentiment}`); // Likely "positive"
+```
 
-*   **`parselm.switch(context: string, fns: Record<string, Function>): Promise<any>`**: Classifies the `context` based on the keys (names) provided in the `fns` object map. It then executes the function associated with the chosen key, passing the original `context` to that function. Returns the result of the executed function.
-    ```typescript
-    async function handleBug(ctx: string) {
-      console.log("Handling bug report:", ctx);
-      // ... logic to file bug ticket
-      return { status: "Bug Filed" };
-    }
+### `parselm.toList(context: string): Promise<string[]>`
 
-    async function handleFeature(ctx: string) {
-      console.log("Handling feature request:", ctx);
-      // ... logic to add to backlog
-      return { status: "Feature Added to Backlog" };
-    }
+Extracts a list of strings from the `context`.
+```typescript
+const listText = "Items needed: apples, bananas, oranges.";
+const items = await parselm.toList(listText);
+console.log("Shopping list:", items); // Likely ["apples", "bananas", "oranges"]
+```
 
-    async function handleQuestion(ctx: string) {
-        console.log("Handling question:", ctx);
-        // ... logic to route to support
-        return { status: "Question Routed" };
-    }
+### `parselm.toListOf<T>(context: string, itemSchema: z.ZodSchema<T>): Promise<T[]>`
 
-    const ticketText = "The login button isn't working on the staging server.";
+Extracts a list where each item conforms to the provided Zod `itemSchema`.
+```typescript
+const taskSchema = z.object({ description: z.string(), priority: z.number() });
+const tasksText = "Task 1: Write report (Priority 1). Task 2: Schedule meeting (Priority 3).";
+const tasks = await parselm.toListOf(tasksText, taskSchema);
+console.log("Parsed tasks:", tasks);
+// Likely:
+// [
+//   { description: 'Write report', priority: 1 },
+//   { description: 'Schedule meeting', priority: 3 }
+// ]
+```
 
-    const result = await parselm.switch(ticketText, {
-      reportBug: () => handleBug(ticketText),
-      requestFeature: () => handleFeature(ticketText),
-      askQuestion: () => handleQuestion(ticketText),
-    });
+### `parselm.switch(context: string, fns: Record<string, Function>): Promise<any>`
 
-    console.log("Switch result:", result);
-    // Likely Output:
-    // Handling bug report: The login button isn't working on the staging server.
-    // Switch result: { status: 'Bug Filed' }
-    ```
+Classifies the `context` based on the keys (names) provided in the `fns` object map. It then executes the function associated with the chosen key, passing the original `context` to that function. Returns the result of the executed function.
+```typescript
+async function handleBug(ctx: string) {
+  console.log("Handling bug report:", ctx);
+  // ... logic to file bug ticket
+  return { status: "Bug Filed" };
+}
+
+async function handleFeature(ctx: string) {
+  console.log("Handling feature request:", ctx);
+  // ... logic to add to backlog
+  return { status: "Feature Added to Backlog" };
+}
+
+async function handleQuestion(ctx: string) {
+    console.log("Handling question:", ctx);
+    // ... logic to route to support
+    return { status: "Question Routed" };
+}
+
+const ticketText = "The login button isn't working on the staging server.";
+
+const result = await parselm.switch(ticketText, {
+  reportBug: () => handleBug(ticketText),
+  requestFeature: () => handleFeature(ticketText),
+  askQuestion: () => handleQuestion(ticketText),
+});
+
+console.log("Switch result:", result);
+// Likely Output:
+// Handling bug report: The login button isn't working on the staging server.
+// Switch result: { status: 'Bug Filed' }
+```
 
 ## FAQ
 
