@@ -1,3 +1,5 @@
+import { describe, test } from "node:test";
+import assert from "node:assert";
 import { inferType } from "./base64";
 
 describe("inferType", () => {
@@ -10,6 +12,6 @@ describe("inferType", () => {
     const input = Buffer.from(buffer).toString("base64");
 
     const type = await inferType(input);
-    expect(type).toBe("image/png");
+    assert.strictEqual(type, "image/png");
   });
 });

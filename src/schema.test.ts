@@ -1,3 +1,5 @@
+import { describe, test } from "node:test";
+import assert from "node:assert";
 import { minimalSchema } from "./schema";
 
 describe("schema", () => {
@@ -21,7 +23,7 @@ describe("schema", () => {
 
     const expected1 =
       "{ skyColor: 'lightBlue' | 'gray' | 'black', grassColor: 'green' | 'brown' | 'yellow' }";
-    expect(minimalSchema(schema1)).toBe(expected1);
+    assert.strictEqual(minimalSchema(schema1), expected1);
   });
 
   test("should convert complex nested schema correctly", () => {
@@ -66,7 +68,7 @@ describe("schema", () => {
 
     const expected2 =
       "{ companyName: string, foundedYear: float, address: { street: string, city: string, state: string, country: string, zipcode: string, suite: string }, engineeringTeams: string[], departments: [ { name: string, employees: float } ] }";
-    expect(minimalSchema(schema2)).toBe(expected2);
+    assert.strictEqual(minimalSchema(schema2), expected2);
   });
 
   test.only("should handle referenced schema types", () => {
@@ -96,7 +98,7 @@ describe("schema", () => {
 
     const expected =
       "{ first_name: string, last_name: string, shipping_address: { street_address: string, city: string, state: 'CA' | 'NY' } }";
-    expect(minimalSchema(schema)).toBe(expected);
+    assert.strictEqual(minimalSchema(schema), expected);
   });
 
   test("should handle mixed numeric and string enums", () => {
@@ -116,7 +118,7 @@ describe("schema", () => {
     };
 
     const expected = "{ status: 0 | 1 | 2, mode: 'auto' | 'manual' }";
-    expect(minimalSchema(schema)).toBe(expected);
+    assert.strictEqual(minimalSchema(schema), expected);
   });
 
   test("should handle array with primitive items", () => {
@@ -133,7 +135,7 @@ describe("schema", () => {
     };
 
     const expected = "{ tags: string[] }";
-    expect(minimalSchema(schema)).toBe(expected);
+    assert.strictEqual(minimalSchema(schema), expected);
   });
 
   test("should handle empty objects", () => {
@@ -147,7 +149,7 @@ describe("schema", () => {
     };
 
     const expected = "{ metadata: {} }";
-    expect(minimalSchema(schema)).toBe(expected);
+    assert.strictEqual(minimalSchema(schema), expected);
   });
 
   test("should handle boolean types", () => {
@@ -162,6 +164,6 @@ describe("schema", () => {
     };
 
     const expected = "{ isActive: boolean }";
-    expect(minimalSchema(schema)).toBe(expected);
+    assert.strictEqual(minimalSchema(schema), expected);
   });
 });

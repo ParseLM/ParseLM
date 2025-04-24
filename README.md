@@ -174,35 +174,3 @@ These are shortcuts built on top of the core `context().schema()` flow.
     // Handling bug report: The login button isn't working on the staging server.
     // Switch result: { status: 'Bug Filed' }
     ```
-
-## Provider Interface (`ProviderConfig`)
-
-To use ParseLM, you must supply an object implementing the `ProviderConfig` interface. This object acts as a bridge to your chosen LLM API.
-
-```typescript
-// Defined in src/model.ts (simplified)
-export interface ProviderConfig {
-  structured: (params: StructuredParams) => Promise<{
-      structured: object | null; // Parsed JSON object or null on failure
-      raw: string;             // Raw text response from LLM
-      cost?: number | null;     // Optional cost reported by provider
-  }>;
-}
-
-export interface StructuredParams {
-  input: string;         // The text context
-  schema: Schema;        // The JSON schema derived from Zod
-  retries: number;       // Number of retries remaining (for provider-side retry logic)
-  backoffFactor: number; // Exponential backoff factor
-  modelConfig?: object;  // Optional provider-specific model config
-}
-```
-
-Your `structured` implementation should:
-1.  Construct a prompt instructing the LLM to generate JSON matching the `schema` based on the `input`.
-2.  Call the LLM API using the prompt and any `modelConfig`.
-3.  Parse the LLM's response string into a JavaScript object.
-4.  Handle potential errors during the API call or JSON parsing.
-5.  Return the parsed object (or `null` if parsing failed), the raw response string, and optionally the cost.
-
-Refer to specific provider implementation examples (e.g., for OpenAI, Anthropic) for details. 

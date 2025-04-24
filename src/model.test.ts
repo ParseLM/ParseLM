@@ -1,3 +1,5 @@
+import { describe, test } from "node:test";
+import assert from "node:assert";
 import { parseJsonSubstring, structured } from "./model";
 import { Schema } from "jsonschema";
 
@@ -16,34 +18,34 @@ describe("structured", () => {
     const schema: Schema = {
       type: "object",
       properties: {
-        result: { type: "string" }
-      }
+        result: { type: "string" },
+      },
     };
 
     const result = await structured({
       input: "test input",
       schema,
       provider: mockProvider,
-      maxAttempts: 2
+      retryCount: 1,
     });
 
-    expect(attempts).toBe(2);
-    expect(result.structured).toEqual({ result: "success" });
-    expect(result.attempts).toBe(2);
+    assert.strictEqual(attempts, 2);
+    assert.deepStrictEqual(result.structured, { result: "success" });
+    assert.strictEqual(result.attempts, 2);
   });
 });
 
 describe("parseJsonSubstring", () => {
   test("Extracts JSON from a code block", () => {
     const input = 'Here is JSON:\n```json\n{\n"character": "Shrek"\n}\n```';
-    expect(parseJsonSubstring(input).structured).toEqual({
+    assert.deepStrictEqual(parseJsonSubstring(input).structured, {
       character: "Shrek",
     });
   });
 
   test("Extracts JSON from plain text", () => {
     const input = '\n{\n"character": "Shrek"\n}\n';
-    expect(parseJsonSubstring(input).structured).toEqual({
+    assert.deepStrictEqual(parseJsonSubstring(input).structured, {
       character: "Shrek",
     });
   });
@@ -57,7 +59,7 @@ describe("parseJsonSubstring", () => {
     {
       "character": "Donkey"
     }`;
-    expect(parseJsonSubstring(input).structured).toEqual({
+    assert.deepStrictEqual(parseJsonSubstring(input).structured, {
       character: "Donkey",
     });
   });
@@ -73,7 +75,7 @@ describe("parseJsonSubstring", () => {
     \`\`\`json
     { "character": "Donkey" }
     \`\`\``;
-    expect(parseJsonSubstring(input).structured).toEqual({
+    assert.deepStrictEqual(parseJsonSubstring(input).structured, {
       character: "Donkey",
     });
   });
@@ -89,7 +91,7 @@ describe("parseJsonSubstring", () => {
       }
     }
     \`\`\``;
-    expect(parseJsonSubstring(input).structured).toEqual({
+    assert.deepStrictEqual(parseJsonSubstring(input).structured, {
       character: "Shrek",
       details: {
         age: 30,
@@ -101,30 +103,30 @@ describe("parseJsonSubstring", () => {
   test("Handles text before and after JSON", () => {
     const input =
       'Some text before\n{\n"character": "Shrek"\n}\nSome text after';
-    expect(parseJsonSubstring(input).structured).toEqual({
+    assert.deepStrictEqual(parseJsonSubstring(input).structured, {
       character: "Shrek",
     });
   });
 
   test("Handles JSON with spaces and newlines", () => {
     const input = '  \n  {  \n  "character"  :  "Shrek"  \n  }  \n  ';
-    expect(parseJsonSubstring(input).structured).toEqual({
+    assert.deepStrictEqual(parseJsonSubstring(input).structured, {
       character: "Shrek",
     });
   });
 
   test("Ignores invalid/malformed JSON", () => {
     const input = "Here is a malformed JSON: ```json { character: Shrek } ```";
-    expect(parseJsonSubstring(input).structured).toBeNull();
+    assert.strictEqual(parseJsonSubstring(input).structured, null);
   });
 
   test("Returns null when no JSON is found", () => {
     const input = "This is just some text with no JSON.";
-    expect(parseJsonSubstring(input).structured).toBeNull();
+    assert.strictEqual(parseJsonSubstring(input).structured, null);
   });
 
   test("Returns null for empty input", () => {
     const input = "";
-    expect(parseJsonSubstring(input).structured).toBeNull();
+    assert.strictEqual(parseJsonSubstring(input).structured, null);
   });
 });
