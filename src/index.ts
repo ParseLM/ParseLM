@@ -1,5 +1,19 @@
 import { inferType, validTypes } from "./base64";
-import { structured } from "./model";
+import { structured, ProviderConfig } from "./model";
 import { validateJsonSchema } from "./schema";
+import { ParseLM, createOpenAICompatibleProvider } from "./parselm";
 
-export { structured, validateJsonSchema, inferType, validTypes };
+export {
+  // Core functionality
+  ParseLM,
+  createOpenAICompatibleProvider,
+
+  // Provider interfaces
+  ProviderConfig,
+
+  // Lower-level utilities
+  structured,
+  validateJsonSchema,
+  inferType,
+  validTypes,
+};

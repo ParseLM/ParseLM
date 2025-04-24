@@ -1,8 +1,34 @@
 {
   "name": "parselm",
   "version": "0.1.5",
+  "description": "Reliably structure LLM outputs for data and control flow",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "keywords": [
+    "llm",
+    "ai",
+    "natural-language-processing",
+    "openai",
+    "anthropic",
+    "gemini",
+    "structure",
+    "parsing",
+    "zod"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/parselm/parselm.git"
+  },
+  "homepage": "https://github.com/parselm/parselm#readme",
+  "bugs": {
+    "url": "https://github.com/parselm/parselm/issues"
+  },
   "dependencies": {
     "ajv": "^8.17.1",
     "async-retry": "^1.3.3",
@@ -26,9 +52,15 @@
     "openai": "^4.85.4"
   },
   "scripts": {
-    "test": "node --import=dotenv/config --import=tsx --test src/*.test.ts",
+    "test": "node --import dotenv/config --import tsx/esm --test src/*.test.ts",
     "build": "tsc --build",
     "watch": "tsc -w",
-    "format": "prettier --write \"**/*.{ts,js,json,md,html,css}\""
+    "format": "prettier --write \"**/*.{ts,js,json,md,html,css}\"",
+    "prepublishOnly": "node scripts/prepare-publish.js",
+    "prepare-publish": "node scripts/prepare-publish.js",
+    "lint": "prettier --check \"**/*.{ts,js,json,md,html,css}\""
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }
