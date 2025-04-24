@@ -187,7 +187,7 @@ Defines the Zod schema for the data to be extracted from the `context`. Returns 
 
 *   **`.value(): Promise<T>`**: Executes the LLM call (if not already done) and returns the parsed, validated data according to the schema. Throws an error if parsing, validation, or the LLM call fails.
 *   **`.safeValue(): Promise<{ success: true; value: T } | { success: false; error: string; value: null }>`**: Executes the LLM call and returns a result object indicating success or failure, avoiding thrown exceptions.
-*   **`.raw(): Promise<{ structured: T | null, raw: string, cost?: number | null }>`**: Executes the LLM call and returns an object containing the parsed data (or null on failure), the raw text response from the LLM, and potentially the cost estimation if provided by the model.
+*   **`.raw(): Promise<{ structured: T | null, raw: string, valid: boolean, attempts: number, errors?: any }>`**: Executes the LLM call and returns an object containing the parsed data (or null on failure), the raw text response from the LLM, validation status, number of attempts, and any validation errors.
 
 ## Utility Methods
 
