@@ -193,40 +193,42 @@ Defines the Zod schema for the data to be extracted from the `context`. Returns 
 
 These are shortcuts built on top of the core `context().schema()` flow.
 
-### `parselm.isTrue(context: string): Promise<boolean>`
+### isTrue
 
 Determines if the `context` represents a logically true statement. Useful for simple yes/no checks.
+
 ```typescript
 const text = "The system status is green and operational.";
-const isOperational = await parselm.isTrue(text);
+const isOperational: boolean = await parselm.isTrue(text);
 console.log(`System operational: ${isOperational}`); // Likely true
 ```
 
-### `parselm.oneOf(context: string, strings: string[]): Promise<string>`
+### oneOf
 
 Classifies the `context` into exactly one of the provided `strings`. Throws an error if the LLM's classification doesn't match one of the options.
+
 ```typescript
 const inputText = "This feedback is highly positive and encouraging!";
-const sentiment = await parselm.oneOf(inputText, ["positive", "negative", "neutral"]);
+const sentiment: string = await parselm.oneOf(inputText, ["positive", "negative", "neutral"]);
 console.log(`Detected sentiment: ${sentiment}`); // Likely "positive"
 ```
 
-### `parselm.toList(context: string): Promise<string[]>`
+### toList
 
 Extracts a list of strings from the `context`.
 ```typescript
 const listText = "Items needed: apples, bananas, oranges.";
-const items = await parselm.toList(listText);
+const items: string[] = await parselm.toList(listText);
 console.log("Shopping list:", items); // Likely ["apples", "bananas", "oranges"]
 ```
 
-### `parselm.toListOf<T>(context: string, itemSchema: z.ZodSchema<T>): Promise<T[]>`
+### toListOf
 
 Extracts a list where each item conforms to the provided Zod `itemSchema`.
 ```typescript
 const taskSchema = z.object({ description: z.string(), priority: z.number() });
 const tasksText = "Task 1: Write report (Priority 1). Task 2: Schedule meeting (Priority 3).";
-const tasks = await parselm.toListOf(tasksText, taskSchema);
+const tasks: z.infer<typeof taskSchema>[] = await parselm.toListOf(tasksText, taskSchema);
 console.log("Parsed tasks:", tasks);
 // Likely:
 // [
@@ -235,7 +237,7 @@ console.log("Parsed tasks:", tasks);
 // ]
 ```
 
-### `parselm.switch(context: string, fns: Record<string, Function>): Promise<any>`
+### switch
 
 Classifies the `context` based on the keys (names) provided in the `fns` object map. It then executes the function associated with the chosen key, passing the original `context` to that function. Returns the result of the executed function.
 ```typescript
