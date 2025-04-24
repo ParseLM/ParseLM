@@ -198,14 +198,14 @@ These are shortcuts built on top of the core `context().schema()` flow.
 Determines if the `context` represents a logically true statement. Useful for simple yes/no checks.
 
 ```typescript
-const text = "The system status is green and operational.";
+const text = `The system is operational based on these metrics: ${metrics}`;
 const isOperational: boolean = await parselm.isTrue(text);
 console.log(`System operational: ${isOperational}`); // Likely true
 ```
 
 ### oneOf
 
-Classifies the `context` into exactly one of the provided `strings`. Throws an error if the LLM's classification doesn't match one of the options.
+Classifies the `context` into exactly one of the provided `string` options. Throws an error if the LLM's classification doesn't match one of the options.
 
 ```typescript
 const inputText = "This feedback is highly positive and encouraging!";
@@ -216,6 +216,7 @@ console.log(`Detected sentiment: ${sentiment}`); // Likely "positive"
 ### toList
 
 Extracts a list of strings from the `context`.
+
 ```typescript
 const listText = "Items needed: apples, bananas, oranges.";
 const items: string[] = await parselm.toList(listText);
@@ -225,6 +226,7 @@ console.log("Shopping list:", items); // Likely ["apples", "bananas", "oranges"]
 ### toListOf
 
 Extracts a list where each item conforms to the provided Zod `itemSchema`.
+
 ```typescript
 const taskSchema = z.object({ description: z.string(), priority: z.number() });
 const tasksText = "Task 1: Write report (Priority 1). Task 2: Schedule meeting (Priority 3).";
