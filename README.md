@@ -32,7 +32,6 @@ import { z } from "zod";
 
 const parselm = new ParseLM({
   provider: createOpenAICompatibleProvider("gemini-2.0-flash", "https://generativelanguage.googleapis.com/v1beta", process.env.API_KEY),
-  retryCount: 1, // Optional: Retries after the first attempt
 });
 
 const context = "User: John Doe, Age: 30, Email: john.doe@example.com";
@@ -58,25 +57,48 @@ async function getUserData() {
     console.log("Extracted User Data:", userData);
     // Expected Output (example):
     // Extracted User Data: { name: 'John Doe', age: 30, email: 'john.doe@example.com' }
-
-    // For safe extraction without throwing:
-    const safeResult = await parselm
-        .context(context)
-        .schema(userSchema)
-        .safeValue(); // Returns { success: true, value: ... } or { success: false, error: ..., value: null }
-
-    if (safeResult.success) {
-        console.log("Safely Extracted:", safeResult.value);
-    } else {
-        console.error("Extraction failed:", safeResult.error);
-    }
-
   } catch (error) {
     console.error("An error occurred:", error);
   }
 }
 
 getUserData();
+```
+
+## Advanced Usage
+
+### Error Handling with safeValue()
+
+For cases where you want to handle extraction failures gracefully without try/catch blocks:
+
+```typescript
+async function getSafeUserData() {
+  // Returns { success: true, value: ... } or { success: false, error: ..., value: null }
+  const result = await parselm
+    .context(context)
+    .schema(userSchema)
+    .safeValue();
+
+  if (result.success) {
+    console.log("Safely Extracted:", result.value);
+    return result.value;
+  } else {
+    console.error("Extraction failed:", result.error);
+    return null;
+  }
+}
+```
+
+### Configuring Retries
+
+Configure automatic retries for handling transient LLM API errors:
+
+```typescript
+const parselm = new ParseLM({
+  provider: createOpenAICompatibleProvider("gemini-2.0-flash", "https://generativelanguage.googleapis.com/v1beta", process.env.API_KEY),
+  retryCount: 3, // Retry up to 3 times after initial attempt
+  backoffFactor: 2, // Exponential backoff, doubling delay between retries
+});
 ```
 
 ## API
