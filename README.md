@@ -101,6 +101,66 @@ const parselm = new ParseLM({
 });
 ```
 
+### Image Analysis
+
+Extract structured data from images by providing image data as part of the context:
+
+```typescript
+import { ParseLM, createOpenAICompatibleProvider } from "parselm";
+import { z } from "zod";
+import fs from "fs/promises";
+
+// Create a provider with vision capabilities
+const parselm = new ParseLM({
+  provider: createOpenAICompatibleProvider("gemini-2.0-flash", "https://generativelanguage.googleapis.com/v1beta", process.env.API_KEY),
+});
+
+// Define schema for product information
+const productSchema = z.object({
+  name: z.string().describe("Product name displayed on the packaging"),
+  brand: z.string().describe("Brand name of the product"),
+  price: z.string().optional().describe("Price if visible on the image"),
+  keyFeatures: z.array(z.string()).describe("Key features or selling points of the product"),
+  category: z.string().describe("Product category (e.g., electronics, food, clothing)")
+});
+
+async function analyzeProductImage(imagePath) {
+  // Read image as base64
+  const imageBuffer = await fs.readFile(imagePath);
+  const base64Image = imageBuffer.toString("base64");
+  
+  // Create image context with prompt
+  const imageContext = {
+    text: "Analyze this product image and extract detailed information about the item shown.",
+    images: [base64Image]
+  };
+  
+  try {
+    const productData = await parselm
+      .context(imageContext)
+      .schema(productSchema)
+      .value();
+      
+    console.log("Product Information:", productData);
+    // Example output:
+    // Product Information: {
+    //   name: "Ultra HD Smart TV 55\"",
+    //   brand: "TechVision",
+    //   price: "$499.99",
+    //   keyFeatures: ["4K Resolution", "HDR10+", "Built-in Voice Assistant", "120Hz Refresh Rate"],
+    //   category: "electronics"
+    // }
+    
+    return productData;
+  } catch (error) {
+    console.error("Failed to analyze image:", error);
+    return null;
+  }
+}
+
+analyzeProductImage("./product-image.jpg");
+```
+
 ## API
 
 ### `new ParseLM(config: ParseLMConfig)`
